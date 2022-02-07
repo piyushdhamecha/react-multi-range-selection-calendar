@@ -1,3 +1,5 @@
-export const YEAR_OPTIONS = [{
-  label: '2021'
-}]
+export const YEAR_OPTIONS = [
+  {
+    label: '2021',
+  },
+];
