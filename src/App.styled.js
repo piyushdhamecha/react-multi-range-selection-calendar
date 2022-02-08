@@ -76,6 +76,7 @@ export const StyledCalendarContainer = styled.div`
       background: #ededed;
       color: #989898;
       border-radius: 0;
+      cursor: pointer;
     }
 
     .DayPicker:not(.DayPicker--interactionDisabled)
@@ -88,45 +89,43 @@ export const StyledCalendarContainer = styled.div`
       border-radius: 50%;
     }
 
-    .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)
-      ${StyledDayContainer} {
+    .DayPicker-Day--selected:not(.DayPicker-Day--outside) ${StyledDayContainer} {
       position: relative;
       background-color: ${HOVER_COLOR};
       color: #fff;
     }
 
-    .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside).DayPicker-Day--firstDayFromRange
+    .DayPicker-Day--selected:not(.DayPicker-Day--outside).DayPicker-Day--firstDayFromRange
       ${StyledDayContainer} {
       border-top-left-radius: 50%;
       border-bottom-left-radius: 50%;
     }
 
-    .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside).DayPicker-Day--lastDayFromRange
+    .DayPicker-Day--selected:not(.DayPicker-Day--outside).DayPicker-Day--lastDayFromRange
       ${StyledDayContainer} {
       border-top-right-radius: 50%;
       border-bottom-right-radius: 50%;
     }
 
-    .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside).DayPicker-Day--alreadyInRange
+    .DayPicker-Day--selected:not(.DayPicker-Day--outside).DayPicker-Day--alreadyInRange
       ${StyledDayContainer} {
       background-color: ${SELECTED_COLOR};
     }
 
     .DayPicker:not(.DayPicker--interactionDisabled)
-      .DayPicker-Day--unSelected:not(.DayPicker-Day--disabled).DayPicker-Day--selected
+      .DayPicker-Day--unSelected.DayPicker-Day--selected
       ${StyledDayContainer} {
       background-color: ${HOVER_COLOR};
     }
 
-    .DayPicker-Day--from:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)
-      ${StyledDayContainer} {
+    .DayPicker-Day--from:not(.DayPicker-Day--outside) ${StyledDayContainer} {
       border-radius: 50%;
       background-color: ${SELECTED_COLOR};
       position: relative;
       color: #fff;
     }
 
-    .DayPicker-Day--from:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)::before {
+    .DayPicker-Day--from:not(.DayPicker-Day--outside)::before {
       position: absolute;
       background-color: ${HOVER_COLOR};
       left: 50%;
@@ -137,8 +136,7 @@ export const StyledCalendarContainer = styled.div`
       z-index: -1;
     }
 
-    .DayPicker-Day--to:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)
-      ${StyledDayContainer} {
+    .DayPicker-Day--to:not(.DayPicker-Day--outside) ${StyledDayContainer} {
       border-radius: 50%;
       background-color: ${SELECTED_COLOR};
       position: relative;
@@ -157,7 +155,7 @@ export const StyledCalendarContainer = styled.div`
     }
 
     .DayPicker:not(.DayPicker--interactionDisabled)
-      .DayPicker-Day--alreadyInRange:not(.DayPicker-Day--disabled):hover
+      .DayPicker-Day--alreadyInRange:hover
       ${StyledDayContainer} {
       background-color: #09ab98;
     }

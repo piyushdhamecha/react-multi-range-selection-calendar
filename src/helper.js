@@ -40,26 +40,26 @@ export const isSelectingFirstDay = (from, to) => {
   return !from || isRangeSelected;
 };
 
-const setWeekDay = (date, setBackward) => {
-  const newDate = new Date(date);
+// const setWeekDay = (date, setBackward) => {
+//   const newDate = new Date(date);
 
-  const dayOfWeek = newDate.getDay();
+//   const dayOfWeek = newDate.getDay();
 
-  if (dayOfWeek === 6 || dayOfWeek === 0) {
-    if (setBackward) {
-      newDate.setDate(newDate.getDate() - 1);
-    } else {
-      newDate.setDate(newDate.getDate() + 1);
-    }
+//   if (dayOfWeek === 6 || dayOfWeek === 0) {
+//     if (setBackward) {
+//       newDate.setDate(newDate.getDate() - 1);
+//     } else {
+//       newDate.setDate(newDate.getDate() + 1);
+//     }
 
-    return setWeekDay(newDate, setBackward);
-  }
+//     return setWeekDay(newDate, setBackward);
+//   }
 
-  return newDate;
-};
+//   return newDate;
+// };
 
 export const splitRanges = (tempUnSelectedRange, ranges) => {
-  let newRanges = [];
+  const newRanges = [];
 
   ranges.forEach((range) => {
     const { from, to } = range;
@@ -79,6 +79,9 @@ export const splitRanges = (tempUnSelectedRange, ranges) => {
         return;
       }
 
+      const isFromSameAsTempFrom = DateUtils.isSameDay(from, tempUnSelectedRange.from);
+      const isToSameAsTempTo = DateUtils.isSameDay(to, tempUnSelectedRange.to);
+
       const isFromInTempRange = DateUtils.isDayInRange(tempUnSelectedRange.from, range);
       const isToInTempRange = DateUtils.isDayInRange(tempUnSelectedRange.to, range);
 
@@ -88,6 +91,18 @@ export const splitRanges = (tempUnSelectedRange, ranges) => {
 
         firstTempToDate.setDate(firstTempToDate.getDate() - 1);
         secondTempFromDate.setDate(secondTempFromDate.getDate() + 1);
+
+        if (isFromSameAsTempFrom) {
+          newRanges.push({ from: secondTempFromDate, to });
+
+          return;
+        }
+
+        if (isToSameAsTempTo) {
+          newRanges.push({ from, to: firstTempToDate });
+
+          return;
+        }
 
         newRanges.push({ from, to: firstTempToDate });
         newRanges.push({ from: secondTempFromDate, to });
@@ -113,10 +128,10 @@ export const splitRanges = (tempUnSelectedRange, ranges) => {
     }
   });
 
-  newRanges = newRanges.map(({ from, to }) => ({
-    from: setWeekDay(from),
-    to: setWeekDay(to, true),
-  }));
+  // newRanges = newRanges.map(({ from, to }) => ({
+  //   from: setWeekDay(from),
+  //   to: setWeekDay(to, true),
+  // }));
 
   return newRanges;
 };

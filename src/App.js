@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import DayPicker, { DateUtils } from 'react-day-picker';
+import { ImBlocked } from 'react-icons/im';
 
 import {
   // GlobalStyle,
@@ -62,10 +63,6 @@ function App() {
   }, [ranges]);
 
   const handleDayClick = (day, modifiers) => {
-    if (modifiers.disabled) {
-      return;
-    }
-
     const { selected, alreadyInRange } = modifiers;
 
     const isDayInHoverRange = DateUtils.isDayInRange(day, {
@@ -188,7 +185,15 @@ function App() {
                 onDayClick={handleDayClick}
                 onDayMouseEnter={handleDayMouseEnter}
                 modifiers={modifiers}
-                renderDay={(day) => <StyledDayContainer>{day.getDate()}</StyledDayContainer>}
+                renderDay={(day) =>
+                  day.getDate() % 9 === 0 ? (
+                    <StyledDayContainer>
+                      <ImBlocked color="black" />
+                    </StyledDayContainer>
+                  ) : (
+                    <StyledDayContainer>{day.getDate()}</StyledDayContainer>
+                  )
+                }
                 disabledDays={[{ daysOfWeek: [0, 6] }]}
                 month={new Date(selectedYear.value, monthNumber + index)}
               />
