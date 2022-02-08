@@ -45,6 +45,7 @@ export const StyledContainer = styled.div`
 export const StyledFilterContainer = styled.div`
   display: flex;
   grid-gap: 20px;
+  z-index: 10;
 `;
 
 export const StyledCalendarContainer = styled.div`

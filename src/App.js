@@ -3,7 +3,7 @@ import Select from 'react-select';
 import DayPicker, { DateUtils } from 'react-day-picker';
 
 import {
-  GlobalStyle,
+  // GlobalStyle,
   StyledCalendarContainer,
   StyledContainer,
   StyledDayContainer,
@@ -37,23 +37,17 @@ function App() {
     from: null,
     to: null,
   });
-  const [lastDayUnselectedMouseEnter, setLastDayUnselectedMouseEnter] =
-    useState(null);
+  const [lastDayUnselectedMouseEnter, setLastDayUnselectedMouseEnter] = useState(null);
 
   useEffect(() => {
     if (!!tempRange.from && !!tempRange.to) {
-      const { shouldIncrease, increasedRanges } = increaseSmallerRanges(
-        tempRange,
-        ranges,
-      );
+      const { shouldIncrease, increasedRanges } = increaseSmallerRanges(tempRange, ranges);
       setRanges(shouldIncrease ? increasedRanges : [...ranges, tempRange]);
     }
   }, [tempRange]);
 
   useEffect(() => {
     if (!!tempUnSelectedRange.from && !!tempUnSelectedRange.to) {
-      // const { shouldIncrease, increasedRanges } = increaseSmallerRanges(tempRange, ranges)
-      // setRanges(shouldIncrease ? increasedRanges : [...ranges, tempRange])
       const newRanges = splitRanges(tempUnSelectedRange, ranges);
 
       setRanges(newRanges);
@@ -140,10 +134,8 @@ function App() {
   };
 
   const modifiers = {
-    firstDayFromRange: (day) =>
-      ranges.some((r) => DateUtils.isSameDay(day, r.from)),
-    lastDayFromRange: (day) =>
-      ranges.some((r) => DateUtils.isSameDay(day, r.to)),
+    firstDayFromRange: (day) => ranges.some((r) => DateUtils.isSameDay(day, r.from)),
+    lastDayFromRange: (day) => ranges.some((r) => DateUtils.isSameDay(day, r.to)),
     alreadyInRange: (day) => ranges.some((r) => DateUtils.isDayInRange(day, r)),
     unSelected: (day) =>
       DateUtils.isDayInRange(day, {
@@ -156,21 +148,21 @@ function App() {
 
   const yearOptions = getYearOptions();
   const monthOptions = getMonthOptions();
-  const monthNumber = monthNames.findIndex(
-    (monthName) => monthName === selectedMonth.value,
-  );
+  const monthNumber = monthNames.findIndex((monthName) => monthName === selectedMonth.value);
   console.log({ ranges });
   return (
     <>
-      <GlobalStyle />
+      {/* <GlobalStyle /> */}
       <StyledContainer>
         <StyledFilterContainer>
           <Select
+            className="react-select"
             options={yearOptions}
             value={selectedYear}
             onChange={setSelectedYear}
           />
           <Select
+            className="react-select"
             options={monthOptions}
             value={selectedMonth}
             onChange={setSelectedMonth}
@@ -182,9 +174,7 @@ function App() {
               { from: tempRange.from, to: lastDayMouseEnter },
               {
                 from: tempUnSelectedRange.from,
-                to: tempUnSelectedRange.from
-                  ? lastDayUnselectedMouseEnter
-                  : null,
+                to: tempUnSelectedRange.from ? lastDayUnselectedMouseEnter : null,
               },
               ...ranges,
             ];
@@ -198,9 +188,7 @@ function App() {
                 onDayClick={handleDayClick}
                 onDayMouseEnter={handleDayMouseEnter}
                 modifiers={modifiers}
-                renderDay={(day) => (
-                  <StyledDayContainer>{day.getDate()}</StyledDayContainer>
-                )}
+                renderDay={(day) => <StyledDayContainer>{day.getDate()}</StyledDayContainer>}
                 disabledDays={[{ daysOfWeek: [0, 6] }]}
                 month={new Date(selectedYear.value, monthNumber + index)}
               />

@@ -30,8 +30,7 @@ export const monthNames = [
   'December',
 ];
 
-export const getMonthOptions = () =>
-  monthNames.map((month) => ({ label: month, value: month }));
+export const getMonthOptions = () => monthNames.map((month) => ({ label: month, value: month }));
 
 export const isSelectingFirstDay = (from, to) => {
   // const isBeforeFirstDay = from && DateUtils.isDayBefore(day, from)
@@ -80,14 +79,8 @@ export const splitRanges = (tempUnSelectedRange, ranges) => {
         return;
       }
 
-      const isFromInTempRange = DateUtils.isDayInRange(
-        tempUnSelectedRange.from,
-        range,
-      );
-      const isToInTempRange = DateUtils.isDayInRange(
-        tempUnSelectedRange.to,
-        range,
-      );
+      const isFromInTempRange = DateUtils.isDayInRange(tempUnSelectedRange.from, range);
+      const isToInTempRange = DateUtils.isDayInRange(tempUnSelectedRange.to, range);
 
       if (isFromInTempRange && isToInTempRange) {
         const firstTempToDate = new Date(tempUnSelectedRange.from.valueOf());
