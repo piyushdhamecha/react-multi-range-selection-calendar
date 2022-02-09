@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import DayPicker, { DateUtils } from 'react-day-picker';
 import { ImBlocked } from 'react-icons/im';
+import { Tooltip } from '@mui/material';
 
 import {
   // GlobalStyle,
@@ -191,9 +192,11 @@ function App() {
                 modifiers={modifiers}
                 renderDay={(day) =>
                   day.getDate() % 9 === 0 ? (
-                    <StyledDayContainer>
-                      <ImBlocked color="black" />
-                    </StyledDayContainer>
+                    <Tooltip title="Bank holiday" placement="top" arrow>
+                      <StyledDayContainer>
+                        <ImBlocked color="black" />
+                      </StyledDayContainer>
+                    </Tooltip>
                   ) : (
                     <StyledDayContainer>{day.getDate()}</StyledDayContainer>
                   )
