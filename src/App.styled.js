@@ -88,7 +88,8 @@ export const StyledCalendarContainer = styled.div`
     }
 
     .DayPicker:not(.DayPicker--interactionDisabled)
-      .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):not(.DayPicker-Day--from):not(.DayPicker-Day--to):hover::after {
+      .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):not(.DayPicker-Day--from):not(.DayPicker-Day--to):hover::after,
+    .DayPicker-Day.DayPicker-Day--unSelected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):not(.DayPicker-Day--alreadyInRange):hover::after {
       content: '';
       inset: 0px;
       position: absolute;
