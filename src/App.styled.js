@@ -58,6 +58,10 @@ export const StyledCalendarContainer = styled.div`
       justify-content: flex-start;
     }
 
+    .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+      color: inherit;
+    }
+
     .DayPicker:not(.DayPicker--interactionDisabled) .DayPicker-Day {
       padding: 0px;
       border: none;
@@ -79,6 +83,10 @@ export const StyledCalendarContainer = styled.div`
       cursor: pointer;
     }
 
+    .DayPicker-Day--disabled:not(.DayPicker-Day--outside) {
+      background: #ededed;
+    }
+
     .DayPicker:not(.DayPicker--interactionDisabled)
       .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):not(.DayPicker-Day--from):not(.DayPicker-Day--to):hover::after {
       content: '';
@@ -89,7 +97,8 @@ export const StyledCalendarContainer = styled.div`
       border-radius: 50%;
     }
 
-    .DayPicker-Day--selected:not(.DayPicker-Day--outside) ${StyledDayContainer} {
+    .DayPicker-Day--selected:not(.DayPicker-Day--outside):not(.DayPicker-Day--unSelected)
+      ${StyledDayContainer} {
       position: relative;
       background-color: ${HOVER_COLOR};
       color: #fff;
@@ -103,23 +112,43 @@ export const StyledCalendarContainer = styled.div`
       ${StyledDayContainer} {
       border-top-left-radius: 50%;
       border-bottom-left-radius: 50%;
+      color: #fff;
+
+      svg {
+        fill: #fff;
+      }
     }
 
     .DayPicker-Day--selected:not(.DayPicker-Day--outside).DayPicker-Day--lastDayFromRange
       ${StyledDayContainer} {
       border-top-right-radius: 50%;
       border-bottom-right-radius: 50%;
+      color: #fff;
+
+      svg {
+        fill: #fff;
+      }
     }
 
     .DayPicker-Day--selected:not(.DayPicker-Day--outside).DayPicker-Day--alreadyInRange
       ${StyledDayContainer} {
       background-color: ${SELECTED_COLOR};
+      color: #fff;
+
+      svg {
+        fill: #fff;
+      }
     }
 
     .DayPicker:not(.DayPicker--interactionDisabled)
-      .DayPicker-Day--unSelected.DayPicker-Day--selected
+      .DayPicker-Day--unSelected.DayPicker-Day--alreadyInRange
       ${StyledDayContainer} {
       background-color: ${HOVER_COLOR};
+      color: #fff;
+
+      svg {
+        fill: #fff;
+      }
     }
 
     .DayPicker-Day--from:not(.DayPicker-Day--outside) ${StyledDayContainer} {
@@ -141,7 +170,7 @@ export const StyledCalendarContainer = styled.div`
       width: 50%;
       content: '';
       height: 100%;
-      z-index: -1;
+      z-index: 0;
     }
 
     .DayPicker-Day--to:not(.DayPicker-Day--outside) ${StyledDayContainer} {
@@ -163,7 +192,7 @@ export const StyledCalendarContainer = styled.div`
       width: 50%;
       content: '';
       height: 100%;
-      z-index: -1;
+      z-index: 0;
     }
 
     .DayPicker:not(.DayPicker--interactionDisabled)
