@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/react-multi-range-selection-calendar/static/css/main.09d641ff.css",
-    "main.js": "/react-multi-range-selection-calendar/static/js/main.d4c7bb4b.js",
+    "main.js": "/react-multi-range-selection-calendar/static/js/main.e2bcdccd.js",
     "index.html": "/react-multi-range-selection-calendar/index.html",
     "main.09d641ff.css.map": "/react-multi-range-selection-calendar/static/css/main.09d641ff.css.map",
-    "main.d4c7bb4b.js.map": "/react-multi-range-selection-calendar/static/js/main.d4c7bb4b.js.map"
+    "main.e2bcdccd.js.map": "/react-multi-range-selection-calendar/static/js/main.e2bcdccd.js.map"
   },
   "entrypoints": [
     "static/css/main.09d641ff.css",
-    "static/js/main.d4c7bb4b.js"
+    "static/js/main.e2bcdccd.js"
   ]
 }
