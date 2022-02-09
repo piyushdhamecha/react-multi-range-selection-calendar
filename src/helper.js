@@ -1,7 +1,9 @@
 import { DateUtils } from 'react-day-picker';
+import { reduce, sortBy } from 'lodash';
+import moment from 'moment';
 
 export const getYearOptions = () => {
-  const startYear = new Date().getFullYear() - 5;
+  const startYear = 2015;
   const currentYear = new Date().getFullYear() + 5;
   const years = [];
 
@@ -58,7 +60,15 @@ export const isSelectingFirstDay = (from, to) => {
 //   return newDate;
 // };
 
+const addDays = (date, days) => {
+  date.setDate(date.getDate() + days);
+};
+
 export const splitRanges = (tempUnSelectedRange, ranges) => {
+  if (!ranges.length) {
+    return [];
+  }
+
   const newRanges = [];
 
   ranges.forEach((range) => {
@@ -89,23 +99,17 @@ export const splitRanges = (tempUnSelectedRange, ranges) => {
         const firstTempToDate = new Date(tempUnSelectedRange.from.valueOf());
         const secondTempFromDate = new Date(tempUnSelectedRange.to.valueOf());
 
-        firstTempToDate.setDate(firstTempToDate.getDate() - 1);
-        secondTempFromDate.setDate(secondTempFromDate.getDate() + 1);
+        addDays(firstTempToDate, -1);
+        addDays(secondTempFromDate, 1);
 
         if (isFromSameAsTempFrom) {
           newRanges.push({ from: secondTempFromDate, to });
-
-          return;
-        }
-
-        if (isToSameAsTempTo) {
+        } else if (isToSameAsTempTo) {
           newRanges.push({ from, to: firstTempToDate });
-
-          return;
+        } else {
+          newRanges.push({ from, to: firstTempToDate });
+          newRanges.push({ from: secondTempFromDate, to });
         }
-
-        newRanges.push({ from, to: firstTempToDate });
-        newRanges.push({ from: secondTempFromDate, to });
       }
 
       if (isFromInTempRange && !isToInTempRange) {
@@ -149,10 +153,12 @@ export const increaseSmallerRanges = (tempRangeNullable, ranges) => {
       shouldIncrease = true;
       return tempRange;
     }
+
     if (isFromInTempRange && !isToInTempRange) {
       shouldIncrease = true;
       return { from: tempRange.from, to };
     }
+
     return r;
   });
 
@@ -160,4 +166,61 @@ export const increaseSmallerRanges = (tempRangeNullable, ranges) => {
     shouldIncrease,
     increasedRanges: [...new Set(increasedRanges)],
   };
+};
+
+export const updateRanges = (tempRange, ranges) => {
+  let shouldIncrease = false;
+  const sortedRanges = sortBy(ranges, 'from');
+
+  let newRanges = sortedRanges.map((range) => {
+    const { from, to } = range;
+    const isFromInTempRange = DateUtils.isDayInRange(from, tempRange);
+    const isToInTempRange = DateUtils.isDayInRange(to, tempRange);
+
+    if (isFromInTempRange && isToInTempRange) {
+      shouldIncrease = true;
+      return tempRange;
+    }
+
+    if (isFromInTempRange && !isToInTempRange) {
+      shouldIncrease = true;
+      return { from: tempRange.from, to };
+    }
+
+    return range;
+  });
+
+  newRanges = [...new Set(newRanges)];
+
+  let finalRanges;
+
+  if (shouldIncrease) {
+    finalRanges = newRanges;
+  } else {
+    finalRanges = [...newRanges, tempRange];
+  }
+
+  return reduce(
+    sortBy(finalRanges, 'from'),
+    (result, range) => {
+      if (!result.length) {
+        return [range];
+      }
+
+      const resultCopy = [...result];
+
+      const prevIndex = resultCopy.length - 1;
+      const { from: prevFrom, to: prevTo } = resultCopy[prevIndex];
+      const { from, to } = range;
+
+      if (DateUtils.isSameDay(moment(prevTo).add(1, 'd').toDate(), from)) {
+        resultCopy[prevIndex] = { from: prevFrom, to };
+      } else {
+        resultCopy.push(range);
+      }
+
+      return resultCopy;
+    },
+    [],
+  );
 };

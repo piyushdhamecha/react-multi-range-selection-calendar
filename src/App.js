@@ -13,10 +13,11 @@ import {
 import {
   getMonthOptions,
   getYearOptions,
-  increaseSmallerRanges,
+  // increaseSmallerRanges,
   isSelectingFirstDay,
   monthNames,
   splitRanges,
+  updateRanges,
 } from './helper';
 
 import 'react-day-picker/lib/style.css';
@@ -42,8 +43,11 @@ function App() {
 
   useEffect(() => {
     if (!!tempRange.from && !!tempRange.to) {
-      const { shouldIncrease, increasedRanges } = increaseSmallerRanges(tempRange, ranges);
-      setRanges(shouldIncrease ? increasedRanges : [...ranges, tempRange]);
+      const newRanges = updateRanges(tempRange, ranges);
+      // const { shouldIncrease, increasedRanges } = increaseSmallerRanges(tempRange, ranges);
+      // setRanges(shouldIncrease ? increasedRanges : [...ranges, tempRange]);
+
+      setRanges(newRanges);
     }
   }, [tempRange]);
 
