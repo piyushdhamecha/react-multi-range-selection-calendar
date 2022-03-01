@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Select from 'react-select';
-import DayPicker, { DateUtils } from 'react-day-picker';
+import { DateUtils } from 'react-day-picker';
 import { ImBlocked } from 'react-icons/im';
 import { Tooltip } from '@mui/material';
+import { filter } from 'lodash';
 
 import {
   // GlobalStyle,
@@ -22,6 +23,7 @@ import {
 } from './helper';
 
 import 'react-day-picker/lib/style.css';
+import DatePickerWrapper from './DatePickerWrapper';
 
 function App() {
   const [tempRange, setTempRange] = useState({ from: null, to: null });
@@ -67,49 +69,55 @@ function App() {
     setLastDayMouseEnter(null);
   }, [ranges]);
 
-  const handleDayClick = (day, modifiers) => {
-    const { selected, alreadyInRange } = modifiers;
+  const handleDayClick = useCallback(
+    (day, modifiers) => {
+      const { selected, alreadyInRange } = modifiers;
 
-    const isDayInHoverRange = DateUtils.isDayInRange(day, {
-      from: tempRange.from,
-      to: lastDayMouseEnter,
-    });
+      const isDayInHoverRange = DateUtils.isDayInRange(day, {
+        from: tempRange.from,
+        to: lastDayMouseEnter,
+      });
 
-    // Clicking logic:
-    // 1. startDate    -> selected: undefined, isDayInHoverRange: null
-    // 2. endDate      -> selected: true,      isDayInHoverRange: true
-    // 3. remove range -> selected: true,      isDayInHoverRange: null
-    if (!selected || isDayInHoverRange) {
-      setTempRange(DateUtils.addDayToRange(day, tempRange));
+      // Clicking logic:
+      // 1. startDate    -> selected: undefined, isDayInHoverRange: null
+      // 2. endDate      -> selected: true,      isDayInHoverRange: true
+      // 3. remove range -> selected: true,      isDayInHoverRange: null
+      if (!selected || isDayInHoverRange) {
+        setTempRange(DateUtils.addDayToRange(day, tempRange));
 
-      return;
-    }
+        return;
+      }
 
-    const isDayInUnselectedHoverRange = DateUtils.isDayInRange(day, {
-      from: tempUnSelectedRange.from,
-      to: lastDayUnselectedMouseEnter,
-    });
+      const isDayInUnselectedHoverRange = DateUtils.isDayInRange(day, {
+        from: tempUnSelectedRange.from,
+        to: lastDayUnselectedMouseEnter,
+      });
 
-    if ((selected && alreadyInRange) || isDayInUnselectedHoverRange) {
-      setTempUnSelectedRange(DateUtils.addDayToRange(day, tempUnSelectedRange));
-    }
-  };
+      if ((selected && alreadyInRange) || isDayInUnselectedHoverRange) {
+        setTempUnSelectedRange(DateUtils.addDayToRange(day, tempUnSelectedRange));
+      }
+    },
+    [lastDayMouseEnter, tempUnSelectedRange.from, tempUnSelectedRange.to],
+  );
 
-  const handleDayMouseEnter = (day) => {
-    const { from, to } = tempRange;
+  const handleDayMouseEnter = useCallback(
+    (day) => {
+      const { from, to } = tempRange;
 
-    if (!isSelectingFirstDay(from, to, day)) {
-      setLastDayMouseEnter(day);
+      if (!isSelectingFirstDay(from, to, day)) {
+        setLastDayMouseEnter(day);
 
-      return;
-    }
+        return;
+      }
 
-    const { from: unselectedFrom, to: unSelectedTo } = tempUnSelectedRange;
+      const { from: unselectedFrom, to: unSelectedTo } = tempUnSelectedRange;
 
-    if (!isSelectingFirstDay(unselectedFrom, unSelectedTo, day)) {
-      setLastDayUnselectedMouseEnter(day);
-    }
-  };
+      if (!isSelectingFirstDay(unselectedFrom, unSelectedTo, day)) {
+        setLastDayUnselectedMouseEnter(day);
+      }
+    },
+    [tempRange.from, tempRange.to, tempUnSelectedRange.from, tempUnSelectedRange.to],
+  );
 
   const getFromDate = () => {
     if (!tempRange.from && !lastDayMouseEnter) {
@@ -151,7 +159,41 @@ function App() {
   const yearOptions = getYearOptions();
   const monthOptions = getMonthOptions();
   const monthNumber = monthNames.findIndex((monthName) => monthName === selectedMonth.value);
-  console.log({ ranges });
+
+  const selectedDays = useMemo(
+    () => [
+      { from: tempRange.from, to: lastDayMouseEnter },
+      {
+        from: tempUnSelectedRange.from,
+        to: tempUnSelectedRange.from ? lastDayUnselectedMouseEnter : null,
+      },
+      ...ranges,
+    ],
+    [
+      tempRange.from,
+      tempRange.to,
+      lastDayMouseEnter,
+      tempUnSelectedRange.from,
+      tempUnSelectedRange.to,
+      lastDayUnselectedMouseEnter,
+      ranges.length,
+    ],
+  );
+
+  const renderDayComponent = useCallback(
+    (day) =>
+      day.getDate() % 9 === 0 ? (
+        <Tooltip title="Bank holiday" placement="top" arrow>
+          <StyledDayContainer>
+            <ImBlocked color="black" />
+          </StyledDayContainer>
+        </Tooltip>
+      ) : (
+        <StyledDayContainer>{day.getDate()}</StyledDayContainer>
+      ),
+    [],
+  );
+
   return (
     <>
       {/* <GlobalStyle /> */}
@@ -172,37 +214,36 @@ function App() {
         </StyledFilterContainer>
         <StyledCalendarContainer>
           {[...Array(12)].map((test, index) => {
-            const selectedDays = [
-              { from: tempRange.from, to: lastDayMouseEnter },
-              {
-                from: tempUnSelectedRange.from,
-                to: tempUnSelectedRange.from ? lastDayUnselectedMouseEnter : null,
-              },
-              ...ranges,
-            ];
+            const [startDate, endDate] = useMemo(() => {
+              const y = selectedYear.value;
+              const m = monthNumber + index;
+
+              return [new Date(y, m, 1), new Date(y, m + 1, 0)];
+            }, [index, monthNumber, selectedYear.value]);
+
+            const selectedDateForCurrentMonth = useMemo(
+              () =>
+                filter(selectedDays, ({ from, to }) => {
+                  if (!from && !to) {
+                    return false;
+                  }
+
+                  return (
+                    (from >= startDate && from <= endDate) || (startDate >= from && startDate <= to)
+                  );
+                }),
+              [selectedDays],
+            );
+
             return (
-              <DayPicker
+              <DatePickerWrapper
                 key={index} // eslint-disable-line
-                canChangeMonth={false}
-                firstDayOfWeek={1}
-                numberOfMonths={1}
-                selectedDays={selectedDays}
+                month={startDate}
                 onDayClick={handleDayClick}
                 onDayMouseEnter={handleDayMouseEnter}
+                selectedDays={selectedDateForCurrentMonth}
                 modifiers={modifiers}
-                renderDay={(day) =>
-                  day.getDate() % 9 === 0 ? (
-                    <Tooltip title="Bank holiday" placement="top" arrow>
-                      <StyledDayContainer>
-                        <ImBlocked color="black" />
-                      </StyledDayContainer>
-                    </Tooltip>
-                  ) : (
-                    <StyledDayContainer>{day.getDate()}</StyledDayContainer>
-                  )
-                }
-                disabledDays={[{ daysOfWeek: [0, 6] }]}
-                month={new Date(selectedYear.value, monthNumber + index)}
+                renderDayComponent={renderDayComponent}
               />
             );
           })}
